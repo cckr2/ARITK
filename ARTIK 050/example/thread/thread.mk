@@ -8,6 +8,6 @@
 # written permission of Broadcom Corporation.
 #
 
-NAME := App_spi_mcp3208_Test
+NAME := App_thread
 
-$(NAME)_SOURCES := spi_mcp3208.c
+$(NAME)_SOURCES := thread.c
