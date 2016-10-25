@@ -8,6 +8,7 @@
 # written permission of Broadcom Corporation.
 #
 
-NAME := App_i2c_test_Test
+NAME := App_Uart_Test
 
-$(NAME)_SOURCES := i2c_test.c
+$(NAME)_SOURCES := terminal_console.c js_console.c
+
