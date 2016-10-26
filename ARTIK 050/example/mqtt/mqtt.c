@@ -1,86 +1,10 @@
-/*
- * Broadcom Proprietary and Confidential. Copyright 2016 Broadcom
- * All Rights Reserved.
- *
- * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Broadcom Corporation;
- * the contents of this file may not be disclosed to third parties, copied
- * or duplicated in any form, in whole or in part, without the prior
- * written permission of Broadcom Corporation.
- */
-
-/** @file
- *
- */
-
-#include "command_console.h"
 #include "wiced.h"
 #include "mqtt_api.h"
+#include "command_console.h"
 #include "command_console_wifi.h"
 
-/** @file
- *
- * Send/Receive MQTT Application
- *
- * This application snippet demonstrates how to use
- * the WICED MQTT client library.
- *
- * Features demonstrated
- *  - MQTT Client initiation
- *  - MQTT Client publish (sending / receiving)
- *  - MQTT Client subscribing
- *
- * To demonstrate the app, work through the following steps.
- *  1. Modify the CLIENT_AP_SSID/CLIENT_AP_PASSPHRASE Wi-Fi credentials
- *     in the wifi_config_dct.h header file to match your Wi-Fi access point
- *  2. Modify the MQTT_BROKER_IP_ADDRESS to have the ip address of your MQTT broker.
- *  3. Plug the WICED eval board into your computer
- *  4. Open a terminal application and connect to the WICED eval board
- *  5. Build and download the application (to the WICED board)
- *
- * Before running the application on the WICED, Make sure an MQTT daemon that supports
- * version 3.1.1 (eg: mosqitto-server) is running on your broker machine.
- *
- * After the download completes, the terminal displays WICED startup
- * information and then :
- *  - Joins a Wi-Fi network
- *  - Starts an MQTT connection with the server
- *  - Subscribe for a MQTT/WICED/TOPIC topic.
- *  - Publish "Hello WICED" to the same topic
- *  - Received "Hello WICED" from the mqtt deamon.
- *  - Close the MQTT connection
- *
- * TROUBLESHOOTING
- *   If you are having difficulty connecting the MQTT broker,
- *   Make sure your server IP address is configured correctly
- *   Make sure the MQTT version proposed by WICED (v3.1.1) is supported by the broker.
- *
- * NOTES:
- *
- *  - Retransmission: WICED MQTT provides two types of retransmission
- *    * Session continue retransmission: When a session is not set as clean, retransmission
- *      of any queued packets from previous session is done once a connect ACK is received.
- *      Session retransmission is part of the MQTT standard.
- *    * In session retransmission: This basically means trying to resend un ACKed packets.
- *      MQTT left this as an application specific and didn't indicate if/when retransmissions
- *      should occur.  WICED MQTT does retransmissions for unACKed packets on the reception
- *      of a PINGRES (ping response) from the deamon. If keep_alive is disabled (not recommended
- *      , in sessions retransmissions will be disabled.
- *
- *  - The MQTT library doesn't protect against user errors, i.e if a user decided to send a
- *    wrong command in a wrong time, the MQTT library won't stop him. The server would signal
- *    an error though.
- *
- *  - Calling MQTT APIs from the event handler call back functions is possible. The only exception
- *    is the wiced_mqtt_deinit which terminates the thread where the call back is being
- *    issued from.
- */
-/******************************************************
- *                      Macros
- ******************************************************/
-
-
 #define MQTT_CONSOLE_COMMAND_HISTORY_LENGTH  (10)
-#define MAX_MQTT_COMMAND_LENGTH              (85)
+#define MAX_MQTT_COMMAND_LENGTH              (100)
 #define WICED_MQTT_DELAY_IN_MILLISECONDS     (50)
 
 
@@ -152,24 +76,23 @@ static wiced_mqtt_event_type_t expected_event;
 
 static const wiced_ip_setting_t device_init_ip_settings =
 {
-    INITIALISER_IPV4_ADDRESS( .ip_address, MAKE_IPV4_ADDRESS(192,168,  0,  70) ),
+    INITIALISER_IPV4_ADDRESS( .ip_address, MAKE_IPV4_ADDRESS(192,168,0,3) ),
     INITIALISER_IPV4_ADDRESS( .netmask,    MAKE_IPV4_ADDRESS(255,255,255,  0) ),
     INITIALISER_IPV4_ADDRESS( .gateway,    MAKE_IPV4_ADDRESS(192,168,  0,  1) ),
 };
 void application_start( void )
 {
 	 wiced_interface_t interface;
-
-	  wiced_result_t result;
+      wiced_result_t result;
 
       wiced_init( );
 
-
-	  /* Bring up the network interface */
-  	  result = wiced_network_up_default( &interface, &device_init_ip_settings );
-
       WPRINT_APP_INFO( ( "MQTT console start\n") );
 
+      result = wiced_network_up_default( &interface, &device_init_ip_settings );
+      while(result!= WICED_SUCCESS){
+    	  result = wiced_network_up_default( &interface, &device_init_ip_settings );
+      }
       result = command_console_init(STDIO_UART, sizeof(mqtt_command_buffer), mqtt_command_buffer,
                                           MQTT_CONSOLE_COMMAND_HISTORY_LENGTH, mqtt_command_history_buffer, " ");
 
@@ -178,8 +101,6 @@ void application_start( void )
               WPRINT_APP_INFO(("ERROR: Starting the command console\r\n"));
       }
       console_add_cmd_table( mqtt_console_command_table );
-
-
 }
 
 /******************************************************
@@ -308,33 +229,32 @@ static int connect(int argc,char *argv[])
 {
     wiced_ip_address_t ip;
     wiced_mqtt_pkt_connect_t conninfo;
-    wiced_mqtt_security_t *security = NULL;
 
     if(argc > 3)
      {
          WPRINT_APP_INFO(( "ERROR: Too many arguments \n" ));
          return WICED_ERROR;
      }
+
     memset( &conninfo, 0, sizeof( conninfo ) );
     str_to_ip(argv[1],&ip);
 
-    conninfo.port_number = 0;                   /* set to 0 indicates library to use default settings */
+    conninfo.port_number = 8883;                   /* set to 0 indicates library to use default settings */
     conninfo.mqtt_version = WICED_MQTT_PROTOCOL_VER4;
     conninfo.clean_session = 1;
     conninfo.client_id = (uint8_t*)argv[2];
     conninfo.keep_alive = 10;
-    conninfo.password = "DEVICE TOKEN";
-    conninfo.username = "DEVICE ID";
+    conninfo.username = "DEVICE TOKEN";
+    conninfo.password = "DEVICE ID";
     conninfo.peer_cn = NULL;
 
-    if ( wiced_mqtt_connect( mqtt_object, &ip, WICED_STA_INTERFACE, callbacks, security, &conninfo )!= WICED_SUCCESS)
+    if ( wiced_mqtt_connect( mqtt_object, &ip, WICED_STA_INTERFACE, callbacks, NULL, WICED_TRUE, &conninfo )!= WICED_SUCCESS)
     {
         WPRINT_APP_INFO(( "ERROR: Broker is not connected \n" ));
         return WICED_ERROR;
     }
 
      return WICED_SUCCESS;
-
 }
 
 /*
