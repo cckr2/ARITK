@@ -18,8 +18,6 @@ void setColor(int color_R, int color_G,int color_B){
 void setup() {
   // put your setup code here, to run once:
   DebugSerial.begin(115200);
-  pinMode (Button, INPUT);
-  pinMode (Touch, INPUT);
   Red = SoftPWM(R, 0);    //Init Pin Number and Duty Cycle
   Green = SoftPWM(G, 0);
   Blue = SoftPWM(B, 0);
