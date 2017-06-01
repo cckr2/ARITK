@@ -1,12 +1,12 @@
 # ARITK 053
 ## 1. summary
-Function of Control Pin.
-> I don't finish Pin aliasing, so port number is file's number(ex.gpio53, pwm0).
+    1. Function of Control Pin.
+    2. I don't finish Pin aliasing, so port number is file's number(ex.gpio53, pwm0).
 
 ## 2. How to use
 	1. Copy two File(basic_function.c, basic_function.h) into your's project
 	2. Use Function
-        3. You want to test samplecode, copy only source code in main.c
+	3. You want to test samplecode, copy only source code in main.c
 
 ## 3. Fumction and parameter
 ### ADC
