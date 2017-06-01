@@ -2,7 +2,7 @@
 ARTIK Sample code and Module library
 
 ## ARTIK 053
- - Basic Function(gpio,adc, pwm)
+ - Basic Function : Function of Control Pin(gpio,adc, pwm)
  
 ## ARTIK 710
  - SoftPWM(Arduino IDE)
