@@ -1,7 +1,13 @@
 # ARITK
 ARTIK Sample code and Module library
 
-##ARTIK 050
+## ARTIK 053
+ - Basic Function(gpio,adc, pwm)
+ 
+## ARTIK 710
+ - SoftPWM(Arduino IDE)
+
+## ARTIK 050
  - DHT11
  - gpio
  - LIS3DH
