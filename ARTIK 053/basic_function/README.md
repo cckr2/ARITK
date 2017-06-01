@@ -1,7 +1,7 @@
 # ARITK 053
 Function of Control Pin
 
-I don't finish Pin aliasing, so port number is number of File(ex.gpio53, pwm0)
+I don't finish Pin aliasing, so port number is file's number(ex.gpio53, pwm0)
 
 ## ADC
  - int analogInit(void);
