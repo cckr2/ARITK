@@ -1,5 +1,7 @@
 #include <tinyara/config.h>
-#include "basic_function.h"
+#include <stdio.h>
+#include <unistd.h>
+
 #define pin 45
 
 int main(int argc, char *argv[])

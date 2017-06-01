@@ -1,4 +1,6 @@
 #include <tinyara/config.h>
+#include <stdio.h>
+#include <unistd.h>
 
 #define pin 42
 

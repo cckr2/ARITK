@@ -1,6 +1,7 @@
 #include <tinyara/config.h>
 #include <stdio.h>
-#include "basic_function/basic_function.h"
+#include <unistd.h>
+
 int main(int argc, char *argv[])
 {
 	analogInit();
@@ -10,5 +11,6 @@ int main(int argc, char *argv[])
 	}
 
 	analogFinish();
+
 	return 0;
 }
