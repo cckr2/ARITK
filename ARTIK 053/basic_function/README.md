@@ -3,7 +3,8 @@ Function of Control Pin
 
 ## ADC
  - int analogInit(void);
-    1.dd
+ 
+   1.
  - analogRead(int port);
  - analogFinish(void);
 
