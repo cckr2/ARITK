@@ -1,7 +1,7 @@
 # ARITK
 ARTIK Sample code and Module library
 
-##Sample code
+##ARTIK 050
  - DHT11
  - gpio
  - LIS3DH
